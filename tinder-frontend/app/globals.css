@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background-color: #10192e;
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.045) 1px, transparent 0);
+  background-size: 22px 22px;
+  color: #f7f3e8;
+}
+
+/* Видимый фокус для клавиатурной навигации — не убираем outline, только стилизуем. */
+:focus-visible {
+  outline: 2px solid #f5b942;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+@layer components {
+  /* Сигнатурный элемент: "приколотая" бумажная карточка творения. */
+  .pinned-card {
+    @apply relative bg-paper text-ink rounded-[3px] shadow-pinned;
+    background-image:
+      repeating-linear-gradient(
+        transparent,
+        transparent 27px,
+        rgba(28, 28, 28, 0.035) 28px
+      );
+  }
+
+  .pin-dot {
+    @apply absolute left-1/2 -top-3 h-6 w-6 -translate-x-1/2 rounded-full;
+    background: radial-gradient(circle at 35% 30%, #ffd479, #f5b942 55%, #b5811f 100%);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.45);
+  }
+
+  .tape {
+    @apply absolute h-8 w-20 opacity-80;
+    background: rgba(245, 233, 200, 0.55);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .stamp-btn {
+    @apply flex h-16 w-16 items-center justify-center rounded-full border-2 text-2xl transition-transform active:scale-90;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

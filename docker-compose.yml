@@ -1,0 +1,47 @@
+services:
+  backend:
+    build: ./tinder-backend
+    container_name: tinder-backend
+    restart: unless-stopped
+    # Перед первым запуском скопируйте tinder-backend/.env.example
+    # в tinder-backend/.env и настройте под себя (особенно JWT_SECRET_KEY).
+    env_file:
+      - ./tinder-backend/.env
+    environment:
+      # Кладём базу в отдельный том (см. volumes ниже), чтобы данные не
+      # терялись при пересборке образа. Переопределяет то, что в .env.
+      - DATABASE_URL=sqlite:////app/data/app.db
+    volumes:
+      - backend_data:/app/data
+      - backend_uploads:/app/uploads
+    ports:
+      - "8000:8000"
+    networks:
+      - tinder-net
+
+  frontend:
+    build:
+      context: ./tinder-frontend
+      args:
+        # Next.js "запекает" адрес бэкенда в rewrites() прямо во время
+        # сборки (npm run build), поэтому это именно build-arg, а не
+        # обычная runtime environment: — см. комментарий в Dockerfile.
+        # "backend" — имя сервиса из этого же docker-compose, Docker сам
+        # резолвит его в адрес нужного контейнера внутри общей сети.
+        BACKEND_URL: http://backend:8000
+    container_name: tinder-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+    networks:
+      - tinder-net
+
+volumes:
+  backend_data:
+  backend_uploads:
+
+networks:
+  tinder-net:
+    driver: bridge
