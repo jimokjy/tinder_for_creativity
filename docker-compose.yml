@@ -26,9 +26,12 @@ services:
         # Next.js "запекает" адрес бэкенда в rewrites() прямо во время
         # сборки (npm run build), поэтому это именно build-arg, а не
         # обычная runtime environment: — см. комментарий в Dockerfile.
-        # "backend" — имя сервиса из этого же docker-compose, Docker сам
-        # резолвит его в адрес нужного контейнера внутри общей сети.
-        BACKEND_URL: http://backend:8000
+        # По умолчанию — "backend", имя сервиса из этого же docker-compose
+        # (Docker сам резолвит его в адрес нужного контейнера внутри общей
+        # сети). Переопределяйте BACKEND_URL только если бэкенд крутится
+        # не рядом с этим docker-compose, а на отдельном внешнем сервере —
+        # см. корневой .env.example.
+        BACKEND_URL: ${BACKEND_URL:-http://backend:8000}
     container_name: tinder-frontend
     restart: unless-stopped
     depends_on:

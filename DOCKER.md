@@ -77,12 +77,17 @@ docker compose down
 ```yaml
 build:
   args:
-    BACKEND_URL: http://backend:8000
+    BACKEND_URL: ${BACKEND_URL:-http://backend:8000}
 ```
 `backend` здесь — имя сервиса из этого же `docker-compose.yml`, Docker сам
 резолвит его в адрес нужного контейнера внутри общей сети. Если вместо
 этого указать `localhost`/`127.0.0.1` — контейнер фронтенда будет стучаться
 сам в себя, а не в бэкенд, и вы получите `ECONNREFUSED`.
+
+Значение по умолчанию (`http://backend:8000`) подходит, пока оба сервиса
+запускаются этим же `docker-compose.yml` на одном сервере. Если бэкенд
+вынесен на отдельный внешний сервер/домен — задайте `BACKEND_URL` в
+корневом `.env` (см. `.env.example`), например `BACKEND_URL=https://api.example.ru`.
 
 **Если меняете `BACKEND_URL`** — простого `docker compose up` (без
 `--build`) недостаточно, старый адрес уже зашит в собранный образ:
