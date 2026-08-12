@@ -126,7 +126,38 @@ cp tinder-backend/.env.production.example tinder-backend/.env
    (плюс `psycopg2-binary` в `requirements.txt`).
 2. **HTTPS** — сейчас всё поднимается по http; для реального домена
    нужен обратный прокси (например, Caddy или nginx + certbot) перед
-   обоими сервисами.
+   обоими сервисами. Пример для nginx:
+
+   ```bash
+   sudo apt install nginx certbot python3-certbot-nginx
+
+   sudo cp nginx/tinder.conf.example /etc/nginx/sites-available/tinder
+   # отредактируйте server_name (домен) и порт в proxy_pass, если меняли
+   # FRONTEND_PORT
+
+   sudo ln -s /etc/nginx/sites-available/tinder /etc/nginx/sites-enabled/
+   sudo nginx -t && sudo systemctl reload nginx
+
+   sudo certbot --nginx -d example.ru
+   ```
+   `certbot` сам получит сертификат, допишет SSL-настройки в конфиг и
+   добавит редирект с http на https.
+
+   Проксировать наружу нужен только фронтенд (`FRONTEND_PORT`, по
+   умолчанию 3000) — сам Next.js-сервер уже проксирует `/api/*`,
+   `/uploads/*` и `/auth/silaeder/*` на бэкенд внутри docker-сети (см.
+   "Как фронтенд находит бэкенд" выше). Порт бэкенда (`BACKEND_PORT`)
+   можно не открывать наружу вовсе — например, публиковать его только на
+   loopback, поменяв в `docker-compose.yml`:
+   ```yaml
+   ports:
+     - "127.0.0.1:${BACKEND_PORT:-8000}:8000"
+   ```
+
+   После настройки HTTPS не забудьте поменять `APP_URL`,
+   `CORS_ORIGINS` и `CRM_OIDC_REDIRECT_URI` в `tinder-backend/.env` на
+   `https://` (см. пункт 0 выше) — иначе редиректы после логина и OIDC
+   не будут работать.
 3. **Хранилище файлов** — для продакшн-нагрузки лучше вынести
    `/app/uploads` в S3-совместимое хранилище вместо тома на диске
    (см. `app/storage.py` в бэкенде).

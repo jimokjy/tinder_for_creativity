@@ -1,0 +1,34 @@
+# Пример конфига nginx как обратного прокси перед этим приложением.
+# Скопируйте на сервере в /etc/nginx/sites-available/tinder, замените
+# example.ru на свой домен и порт (если меняли FRONTEND_PORT в .env).
+#
+# Только фронтенд нужно проксировать наружу — сам Next.js-сервер уже
+# проксирует /api/*, /uploads/* и /auth/silaeder/* на бэкенд внутри
+# контейнеров (см. tinder-frontend/next.config.js и раздел "Как фронтенд
+# находит бэкенд" в DOCKER.md). Порт бэкенда (8000) в nginx не нужен.
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name example.ru;
+
+    # Должно быть не меньше MAX_UPLOAD_SIZE_MB из tinder-backend/.env
+    # (по умолчанию 20) — иначе nginx отклонит загрузку файла раньше,
+    # чем её увидит бэкенд.
+    client_max_body_size 25m;
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+# После этого запустите:
+#   sudo ln -s /etc/nginx/sites-available/tinder /etc/nginx/sites-enabled/
+#   sudo nginx -t && sudo systemctl reload nginx
+#   sudo certbot --nginx -d example.ru
+# certbot сам допишет в этот файл SSL-настройки и редирект http -> https.
