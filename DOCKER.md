@@ -112,9 +112,13 @@ cp tinder-backend/.env.production.example tinder-backend/.env
 # отредактируйте .env: домен и секреты (см. пункт 0 ниже)
 ```
 
-0. **Если включаете вход через ЛК Силаэдра** — задайте `CRM_OIDC_*`,
-   `SESSION_SECRET_KEY` и (если нужны письма подтверждения) `MAIL_*` в
-   `tinder-backend/.env`, и `APP_URL` там же — на публичный адрес сайта.
+0. **Если включаете вход через ЛК Силаэдра** — при запуске через
+   `docker compose` задайте `APP_URL`, `CRM_OIDC_*` и
+   `SESSION_SECRET_KEY` в **корневом** `.env` (см. `.env.example`), а не
+   в `tinder-backend/.env` — `docker-compose.yml` прокидывает эти
+   переменные в контейнер именно оттуда, и то, что записано в
+   `tinder-backend/.env`, для них не используется. `MAIL_*` (если нужны
+   письма подтверждения) — по-прежнему в `tinder-backend/.env`.
    Redirect URI для регистрации в ЛК Силаэдра: `{APP_URL}/auth/silaeder/callback`.
    Пересборка образа не нужна — это runtime-переменные бэкенда, в
    отличие от `BACKEND_URL` фронтенда.

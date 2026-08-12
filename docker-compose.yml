@@ -16,6 +16,19 @@ services:
       # Кладём базу в отдельный том (см. volumes ниже), чтобы данные не
       # терялись при пересборке образа. Переопределяет то, что в .env.
       - DATABASE_URL=sqlite:////app/data/app.db
+      # Вход через ЛК Силаэдра — задаётся здесь, через корневой .env (см.
+      # .env.example), а не через tinder-backend/.env. ВАЖНО: значения
+      # ниже ВСЕГДА побеждают то, что лежит в tinder-backend/.env для тех
+      # же ключей (так работает docker-compose) — если что-то из этого
+      # уже настроено в tinder-backend/.env, перенесите значения в
+      # корневой .env, иначе они будут молча проигнорированы.
+      - APP_URL=${APP_URL:-http://localhost:3000}
+      - CRM_OIDC_ENABLED=${CRM_OIDC_ENABLED:-false}
+      - CRM_OIDC_ISSUER=${CRM_OIDC_ISSUER:-https://lk.silaeder.ru}
+      - CRM_OIDC_CLIENT_ID=${CRM_OIDC_CLIENT_ID:-}
+      - CRM_OIDC_CLIENT_SECRET=${CRM_OIDC_CLIENT_SECRET:-}
+      - CRM_OIDC_REDIRECT_URI=${CRM_OIDC_REDIRECT_URI:-}
+      - SESSION_SECRET_KEY=${SESSION_SECRET_KEY:-}
     volumes:
       - backend_data:/app/data
       - backend_uploads:/app/uploads
