@@ -72,8 +72,26 @@ def _apply_userinfo(user: User, email: str | None, name: str | None, role: str |
         user.external_role = role
 
 
+_TRANSLIT_MAP = {
+    "а": "a", "б": "b", "в": "v", "г": "g", "д": "d", "е": "e", "ё": "e",
+    "ж": "zh", "з": "z", "и": "i", "й": "y", "к": "k", "л": "l", "м": "m",
+    "н": "n", "о": "o", "п": "p", "р": "r", "с": "s", "т": "t", "у": "u",
+    "ф": "f", "х": "h", "ц": "ts", "ч": "ch", "ш": "sh", "щ": "sch",
+    "ъ": "", "ы": "y", "ь": "", "э": "e", "ю": "yu", "я": "ya",
+}
+
+
+def _transliterate(text: str) -> str:
+    return "".join(_TRANSLIT_MAP.get(ch, ch) for ch in text.lower())
+
+
 def _generate_username(db: Session, seed: str | None) -> str:
-    base = re.sub(r"[^a-zA-Z0-9_]", "", (seed or "user").replace(" ", "_"))[:20].lower() or "user"
+    # Имя из userinfo часто кириллическое (например, "Иван Иванов") — без
+    # транслитерации регулярка ниже вырезала бы все буквы и оставляла
+    # только "_", из-за чего у всех таких пользователей был бы
+    # практически одинаковый пустой логин.
+    transliterated = _transliterate(seed or "user")
+    base = re.sub(r"[^a-zA-Z0-9_]", "", transliterated.replace(" ", "_"))[:20].lower() or "user"
     candidate = base
     suffix = 0
     while db.query(User).filter(User.username == candidate).first():

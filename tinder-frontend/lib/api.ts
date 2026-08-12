@@ -77,8 +77,6 @@ export const api = {
       `/feed/random${category ? `?category=${encodeURIComponent(category)}` : ""}`
     ),
 
-  resetSeen: () => request<{ status: string }>("/feed/reset-seen", { method: "POST" }),
-
   likeCreation: (id: string) =>
     request<LikeToggleResponse>(`/likes/${id}`, { method: "POST" }),
 

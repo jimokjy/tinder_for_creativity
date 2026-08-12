@@ -53,23 +53,10 @@ def get_random_creation(
     if not creation:
         return FeedResponse(creation=None, exhausted=True)
 
-    # Отмечаем как показанное, чтобы больше не предлагать в этой сессии,
-    # даже если пользователь его не лайкнет.
+    # Отмечаем как показанное — это исключает творение из ленты навсегда
+    # (даже если пользователь его не лайкнет, просто пролистает "мимо"),
+    # сброса этой истории больше нет.
     db.add(Seen(creation_id=creation.id, viewer_session_id=user_id))
     db.commit()
 
     return FeedResponse(creation=creation, exhausted=False)
-
-
-@router.post("/reset-seen", status_code=200)
-def reset_seen(
-    db: Session = Depends(get_db),
-    user_id: str = Depends(get_current_user_id),
-):
-    """
-    Сбросить историю просмотров (но не лайки), чтобы куча "наполнилась" снова —
-    полезно, когда пользователь пролистал вообще всё, что было опубликовано.
-    """
-    db.query(Seen).filter(Seen.viewer_session_id == user_id).delete()
-    db.commit()
-    return {"status": "ok"}

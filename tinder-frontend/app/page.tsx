@@ -64,17 +64,11 @@ export default function FeedPage() {
     [creation, loadNext]
   );
 
-  const handleRefill = useCallback(async () => {
-    setStatus("loading");
-    try {
-      await api.resetSeen();
-      loadNext();
-    } catch (err) {
-      setErrorMessage(
-        err instanceof ApiError ? err.message : "Не получилось обновить ленту."
-      );
-      setStatus("error");
-    }
+  // Пропущенные ("мимо") и лайкнутые творения исключаются из ленты навсегда —
+  // "обновить кучу" просто проверяет, не появилось ли что-то новое,
+  // а не возвращает уже просмотренное.
+  const handleRefill = useCallback(() => {
+    loadNext();
   }, [loadNext]);
 
   // Клавиатурная альтернатива свайпу: ← мимо, → нравится.

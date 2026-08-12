@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Backend runtime data / secrets
+tinder-backend/.env
+tinder-backend/app.db
+tinder-backend/uploads/*
+!tinder-backend/uploads/.gitkeep
+
+# Editors / OS
+.DS_Store

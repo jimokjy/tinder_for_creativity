@@ -25,6 +25,7 @@ def _to_user_out(db: Session, user: User) -> UserOut:
     )
     return UserOut(
         username=user.username,
+        display_name=user.display_name,
         created_at=user.created_at,
         email=user.email,
         silaeder_linked=silaeder_linked,

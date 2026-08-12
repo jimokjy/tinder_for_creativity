@@ -48,7 +48,7 @@ export default function Header() {
             <span className="mx-1 h-4 w-px bg-white/15" aria-hidden="true" />
 
             <span className="text-slate-light" title="Вы вошли под этим логином">
-              {user.username}
+              {user.display_name || user.username}
             </span>
             <button
               onClick={logout}

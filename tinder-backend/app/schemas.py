@@ -42,6 +42,7 @@ class UserOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     username: str
+    display_name: Optional[str] = None
     created_at: datetime
     email: Optional[str] = None
     silaeder_linked: bool = False

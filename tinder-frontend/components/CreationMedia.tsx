@@ -26,9 +26,12 @@ export default function CreationMedia({ creation }: { creation: Creation }) {
   }
 
   // Текстовое творение (или неизвестный тип без файла) — показываем как есть.
+  // Важно: скролл только вниз (overflow-y), горизонтальный явно запрещён
+  // (overflow-x-hidden + break-words), иначе длинное слово без пробелов
+  // может растянуть блок вбок вместо переноса на новую строку.
   return (
-    <div className="flex h-80 w-full items-center justify-center bg-paper-dim px-8 py-6">
-      <p className="max-h-full overflow-y-auto whitespace-pre-line text-center font-display text-lg italic leading-relaxed text-ink">
+    <div className="h-80 w-full overflow-y-auto overflow-x-hidden bg-paper-dim px-8 py-6">
+      <p className="w-full whitespace-pre-line break-words font-display text-lg italic leading-relaxed text-ink">
         {creation.description || "Без описания"}
       </p>
     </div>

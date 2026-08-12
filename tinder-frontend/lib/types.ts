@@ -1,5 +1,6 @@
 export interface User {
   username: string;
+  display_name: string | null;
   created_at: string;
   email: string | null;
   silaeder_linked: boolean;
