@@ -4,9 +4,14 @@ services:
     container_name: tinder-backend
     restart: unless-stopped
     # Перед первым запуском скопируйте tinder-backend/.env.example
-    # в tinder-backend/.env и настройте под себя (особенно JWT_SECRET_KEY).
+    # (или .env.production.example для боевого сервера) в
+    # tinder-backend/.env и настройте под себя (особенно JWT_SECRET_KEY).
+    # Файл необязателен (required: false) — без него бэкенд просто
+    # стартует со значениями по умолчанию из app/config.py (годится
+    # только для быстрой проверки, не для реального использования).
     env_file:
-      - ./tinder-backend/.env
+      - path: ./tinder-backend/.env
+        required: false
     environment:
       # Кладём базу в отдельный том (см. volumes ниже), чтобы данные не
       # терялись при пересборке образа. Переопределяет то, что в .env.
