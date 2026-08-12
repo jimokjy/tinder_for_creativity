@@ -4,6 +4,9 @@ __pycache__/
 .venv/
 venv/
 
+# Local docker-compose overrides (e.g. external ports)
+/.env
+
 # Backend runtime data / secrets
 tinder-backend/.env
 tinder-backend/app.db

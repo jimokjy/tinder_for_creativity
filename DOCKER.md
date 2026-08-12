@@ -27,6 +27,13 @@ docker compose up --build
 Фронтенд будет на http://localhost:3000, бэкенд — на http://localhost:8000
 (документация API — http://localhost:8000/docs).
 
+Если эти порты у вас уже заняты, скопируйте `.env.example` в `.env` в
+корне репозитория и поменяйте `BACKEND_PORT`/`FRONTEND_PORT` — Docker
+Compose подхватывает `.env` автоматически:
+```bash
+cp .env.example .env
+```
+
 Дальше для повседневного запуска (без пересборки) достаточно:
 ```bash
 docker compose up
