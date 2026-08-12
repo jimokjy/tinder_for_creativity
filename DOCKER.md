@@ -98,6 +98,15 @@ docker build --build-arg BACKEND_URL=http://ваш-адрес:8000 ./tinder-fron
 
 ## Что стоит доделать перед реальным продакшеном
 
+Для запуска на сервере (публичный домен) используйте
+`tinder-backend/.env.production.example` вместо `.env.example` — там те
+же переменные, но со значениями под публичный домен (`APP_URL`,
+`CORS_ORIGINS`, `CRM_OIDC_REDIRECT_URI`) вместо `localhost`:
+```bash
+cp tinder-backend/.env.production.example tinder-backend/.env
+# отредактируйте .env: домен и секреты (см. пункт 0 ниже)
+```
+
 0. **Если включаете вход через ЛК Силаэдра** — задайте `CRM_OIDC_*`,
    `SESSION_SECRET_KEY` и (если нужны письма подтверждения) `MAIL_*` в
    `tinder-backend/.env`, и `APP_URL` там же — на публичный адрес сайта.
